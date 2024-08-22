@@ -9,7 +9,7 @@ import com.devsu.cuenta_movimientos_servicio.dto.ClienteDTO;
 public class ClienteService {
 
   private final RestTemplate restTemplate;
-  private final String clienteServiceUrl = "http://localhost:8080/api/clientes";
+  private final String clienteServiceUrl = "http://cliente-persona-microservice:8080/api/clientes";
 
   public ClienteService(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
