@@ -1,10 +1,12 @@
 package com.devsu.cliente_persona_servicio.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.devsu.cliente_persona_servicio.dto.ClienteResponseDTO;
 import com.devsu.cliente_persona_servicio.entities.Cliente;
 import com.devsu.cliente_persona_servicio.repository.ClienteRepository;
 import com.devsu.cliente_persona_servicio.exception.ResourceNotFoundException;
@@ -16,22 +18,27 @@ public class ClienteServiceImpl implements ClienteService {
   private ClienteRepository clienteRepository;
 
   @Override
-  public Cliente saveCliente(Cliente cliente) {
-    return clienteRepository.save(cliente);
+  public ClienteResponseDTO saveCliente(Cliente cliente) {
+    clienteRepository.save(cliente);
+    return mapToDTO(cliente);
   }
 
   @Override
-  public Cliente getClienteById(Long clienteId) {
-    return clienteRepository.findById(clienteId)
+  public ClienteResponseDTO getClienteById(Long clienteId) {
+    Cliente cliente = clienteRepository.findById(clienteId)
         .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+
+    return mapToDTO(cliente);
   }
 
   @Override
-  public Cliente updateCliente(Cliente cliente) {
+  public ClienteResponseDTO updateCliente(Cliente cliente) {
     if (!clienteRepository.existsById(cliente.getPersonaId()))
       throw new ResourceNotFoundException("Cliente no encontrado con id: " + cliente.getPersonaId());
 
-    return clienteRepository.save(cliente);
+    Cliente updatedCliente = clienteRepository.save(cliente);
+
+    return mapToDTO(updatedCliente);
   }
 
   @Override
@@ -43,8 +50,19 @@ public class ClienteServiceImpl implements ClienteService {
   }
 
   @Override
-  public List<Cliente> getAllClientes() {
-    return clienteRepository.findAll();
+  public List<ClienteResponseDTO> getAllClientes() {
+    return clienteRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
+  }
+
+  private ClienteResponseDTO mapToDTO(Cliente cliente) {
+    return ClienteResponseDTO.builder()
+        .personaId(cliente.getPersonaId())
+        .nombre(cliente.getNombre())
+        .edad(cliente.getEdad())
+        .identificacion(cliente.getIdentificacion())
+        .direccion(cliente.getDireccion())
+        .telefono(cliente.getTelefono())
+        .build();
   }
 
 }

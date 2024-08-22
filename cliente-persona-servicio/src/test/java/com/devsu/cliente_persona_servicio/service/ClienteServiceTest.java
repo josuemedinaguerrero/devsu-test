@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.devsu.cliente_persona_servicio.dto.ClienteResponseDTO;
 import com.devsu.cliente_persona_servicio.entities.Cliente;
 import com.devsu.cliente_persona_servicio.exception.ResourceNotFoundException;
 import com.devsu.cliente_persona_servicio.repository.ClienteRepository;
@@ -32,6 +33,7 @@ public class ClienteServiceTest {
   private ClienteServiceImpl clienteService;
 
   private Cliente cliente;
+  private ClienteResponseDTO clienteResponseDTO;
 
   @BeforeEach
   void initial() {
@@ -40,34 +42,42 @@ public class ClienteServiceTest {
     cliente.setNombre("Josue");
     cliente.setEstado("Activo");
     cliente.setPassword("123456");
+
+    clienteResponseDTO = ClienteResponseDTO.builder()
+        .personaId(1L)
+        .nombre("Josue")
+        .edad(25)
+        .identificacion("0987654321")
+        .direccion("Avenida Siempre Viva 123")
+        .telefono("0987654321")
+        .build();
   }
 
   @Test
   void ClienteServiceFindAllClientes() {
     when(clienteRepository.findAll()).thenReturn(Arrays.asList(cliente));
-
-    List<Cliente> clientes = clienteService.getAllClientes();
+    List<ClienteResponseDTO> clientes = clienteService.getAllClientes();
 
     Assertions.assertThat(clientes).isNotNull();
+    Assertions.assertThat(clientes.size()).isEqualTo(1);
+    Assertions.assertThat(clientes.get(0).getNombre()).isEqualTo("Josue");
   }
 
   @Test
   void ClienteServiceSaveCliente() {
     when(clienteRepository.save(cliente)).thenReturn(cliente);
+    ClienteResponseDTO savedCliente = clienteService.saveCliente(cliente);
 
-    Cliente savedCliente = clienteService.saveCliente(cliente);
-
-    assertEquals(cliente, savedCliente);
+    assertEquals(clienteResponseDTO.getNombre(), savedCliente.getNombre());
     verify(clienteRepository, times(1)).save(cliente);
   }
 
   @Test
   void ClienteServiceGetClienteById_ClienteExiste() {
     when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
+    ClienteResponseDTO foundCliente = clienteService.getClienteById(1L);
 
-    Cliente foundCliente = clienteService.getClienteById(1L);
-
-    assertEquals(cliente, foundCliente);
+    assertEquals(clienteResponseDTO.getNombre(), foundCliente.getNombre());
     verify(clienteRepository, times(1)).findById(1L);
   }
 
@@ -86,10 +96,9 @@ public class ClienteServiceTest {
   void ClienteServiceUpdateCliente_ClienteExiste() {
     when(clienteRepository.existsById(1L)).thenReturn(true);
     when(clienteRepository.save(cliente)).thenReturn(cliente);
+    ClienteResponseDTO updatedCliente = clienteService.updateCliente(cliente);
 
-    Cliente updatedCliente = clienteService.updateCliente(cliente);
-
-    assertEquals(cliente, updatedCliente);
+    assertEquals(clienteResponseDTO.getNombre(), updatedCliente.getNombre());
     verify(clienteRepository, times(1)).save(cliente);
   }
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.devsu.cliente_persona_servicio.dto.ClienteResponseDTO;
 import com.devsu.cliente_persona_servicio.entities.Cliente;
 import com.devsu.cliente_persona_servicio.service.ClienteService;
 
@@ -25,17 +26,17 @@ public class ClienteController {
   private ClienteService clienteService;
 
   @PostMapping
-  public ResponseEntity<Cliente> createCliente(@RequestBody Cliente cliente) {
+  public ResponseEntity<ClienteResponseDTO> createCliente(@RequestBody Cliente cliente) {
     return new ResponseEntity<>(clienteService.saveCliente(cliente), HttpStatus.CREATED);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Cliente> getClienteById(@PathVariable Long id) {
+  public ResponseEntity<ClienteResponseDTO> getClienteById(@PathVariable Long id) {
     return new ResponseEntity<>(clienteService.getClienteById(id), HttpStatus.OK);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Cliente> updateCliente(@PathVariable Long id, @RequestBody Cliente cliente) {
+  public ResponseEntity<ClienteResponseDTO> updateCliente(@PathVariable Long id, @RequestBody Cliente cliente) {
     cliente.setPersonaId(id);
     return new ResponseEntity<>(clienteService.updateCliente(cliente), HttpStatus.OK);
   }
@@ -47,7 +48,7 @@ public class ClienteController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Cliente>> getAllClientes() {
+  public ResponseEntity<List<ClienteResponseDTO>> getAllClientes() {
     return new ResponseEntity<>(clienteService.getAllClientes(), HttpStatus.OK);
   }
 

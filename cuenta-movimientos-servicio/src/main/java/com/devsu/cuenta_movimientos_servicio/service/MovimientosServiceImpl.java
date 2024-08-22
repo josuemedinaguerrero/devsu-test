@@ -5,12 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.devsu.cuenta_movimientos_servicio.dto.ClienteDTO;
 import com.devsu.cuenta_movimientos_servicio.entities.Cuenta;
 import com.devsu.cuenta_movimientos_servicio.entities.Movimientos;
 import com.devsu.cuenta_movimientos_servicio.exception.InsufficientFundsException;
-import com.devsu.cuenta_movimientos_servicio.exception.ResourceCreationException;
 import com.devsu.cuenta_movimientos_servicio.exception.ResourceNotFoundException;
-import com.devsu.cuenta_movimientos_servicio.exception.ResourceUpdateException;
 import com.devsu.cuenta_movimientos_servicio.repository.CuentaRepository;
 import com.devsu.cuenta_movimientos_servicio.repository.MovimientosRepository;
 
@@ -23,6 +22,9 @@ public class MovimientosServiceImpl implements MovimientosService {
   private MovimientosRepository movimientosRepository;
 
   @Autowired
+  private ClienteService clienteService;
+
+  @Autowired
   private CuentaRepository cuentaRepository;
 
   @Override
@@ -31,10 +33,16 @@ public class MovimientosServiceImpl implements MovimientosService {
     Cuenta cuenta = cuentaRepository.findById(movimiento.getCuenta().getNumeroCuenta())
         .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada"));
 
-    if (movimiento.getValor() > cuenta.getSaldoInicial())
-      throw new InsufficientFundsException("Saldo no disponible");
+    // Verificar la existencia del cliente en el microservicio
+    ClienteDTO cliente = clienteService.obtenerCliente(cuenta.getClienteId());
+    if (cliente == null)
+      throw new ResourceNotFoundException("Cliente no encontrado con id: " + cuenta.getClienteId());
 
-    // Actualizar saldo de la cuenta
+    // Validar saldo suficiente para el movimiento
+    if (movimiento.getValor() > cuenta.getSaldoInicial()) {
+      throw new InsufficientFundsException("Saldo no disponible");
+    }
+
     double nuevoSaldo = cuenta.getSaldoInicial() + movimiento.getValor();
     cuenta.setSaldoInicial(nuevoSaldo);
     cuentaRepository.save(cuenta);
@@ -52,9 +60,13 @@ public class MovimientosServiceImpl implements MovimientosService {
 
   @Override
   public Movimientos updateMovimiento(Movimientos movimientos) {
-    if (!movimientosRepository.existsById(movimientos.getMovimientosId()))
+    Movimientos movimientoDB = movimientosRepository.findById(movimientos.getMovimientosId())
+        .orElseThrow(() -> new ResourceNotFoundException("Movimiento no encontrado"));
+
+    if (movimientoDB == null)
       throw new ResourceNotFoundException("Movimiento no encontrado con id: " + movimientos.getMovimientosId());
 
+    movimientos.setCuenta(movimientoDB.getCuenta());
     return movimientosRepository.save(movimientos);
   }
 
