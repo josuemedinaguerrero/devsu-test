@@ -49,7 +49,6 @@ public class ClienteServiceTest {
     List<Cliente> clientes = clienteService.getAllClientes();
 
     Assertions.assertThat(clientes).isNotNull();
-
   }
 
   @Test

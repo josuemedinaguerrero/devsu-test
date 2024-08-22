@@ -1,5 +1,5 @@
 services:
-  cliente-persona-microservice:
+  cliente-persona-image:
     build: ./cliente-persona-servicio
     container_name: cliente-persona-microservice
     ports:
@@ -11,7 +11,7 @@ services:
     depends_on:
       - db
 
-  cuenta-movimientos-microservice:
+  cuenta-movimientos-image:
     build: ./cuenta-movimientos-servicio
     container_name: cuenta-movimientos-microservice
     ports:
