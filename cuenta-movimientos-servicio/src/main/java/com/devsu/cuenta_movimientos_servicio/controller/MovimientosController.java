@@ -25,8 +25,8 @@ public class MovimientosController {
   private MovimientosService movimientosService;
 
   @PostMapping
-  public ResponseEntity<Movimientos> createMovimiento(@RequestBody Movimientos movimi) {
-    return new ResponseEntity<>(movimientosService.saveMovimiento(movimi), HttpStatus.CREATED);
+  public ResponseEntity<Movimientos> createMovimiento(@RequestBody Movimientos movimiento) {
+    return new ResponseEntity<>(movimientosService.saveMovimiento(movimiento), HttpStatus.CREATED);
   }
 
   @GetMapping("/{id}")
@@ -35,9 +35,9 @@ public class MovimientosController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Movimientos> updateMovimiento(@PathVariable Long id, @RequestBody Movimientos movimi) {
-    movimi.setMovimientosId(id);
-    return new ResponseEntity<>(movimientosService.updateMovimiento(movimi), HttpStatus.OK);
+  public ResponseEntity<Movimientos> updateMovimiento(@PathVariable Long id, @RequestBody Movimientos movimiento) {
+    movimiento.setMovimientosId(id);
+    return new ResponseEntity<>(movimientosService.updateMovimiento(movimiento), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")

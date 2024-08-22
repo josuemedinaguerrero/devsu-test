@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.devsu.cliente_persona_servicio.entities.Cliente;
-import com.devsu.cliente_persona_servicio.exception.ResourceCreationException;
 import com.devsu.cliente_persona_servicio.repository.ClienteRepository;
 import com.devsu.cliente_persona_servicio.exception.ResourceNotFoundException;
-import com.devsu.cliente_persona_servicio.exception.ResourceUpdateException;
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
@@ -19,11 +17,7 @@ public class ClienteServiceImpl implements ClienteService {
 
   @Override
   public Cliente saveCliente(Cliente cliente) {
-    try {
-      return clienteRepository.save(cliente);
-    } catch (Exception e) {
-      throw new ResourceCreationException("Error al crear el cliente");
-    }
+    return clienteRepository.save(cliente);
   }
 
   @Override
@@ -34,14 +28,10 @@ public class ClienteServiceImpl implements ClienteService {
 
   @Override
   public Cliente updateCliente(Cliente cliente) {
-    try {
-      if (!clienteRepository.existsById(cliente.getPersonaId()))
-        throw new ResourceNotFoundException("Cliente no encontrado con id: " + cliente.getPersonaId());
+    if (!clienteRepository.existsById(cliente.getPersonaId()))
+      throw new ResourceNotFoundException("Cliente no encontrado con id: " + cliente.getPersonaId());
 
-      return clienteRepository.save(cliente);
-    } catch (Exception e) {
-      throw new ResourceUpdateException("Error al actualizar el cliente");
-    }
+    return clienteRepository.save(cliente);
   }
 
   @Override

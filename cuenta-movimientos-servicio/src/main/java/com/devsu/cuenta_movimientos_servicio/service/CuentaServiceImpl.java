@@ -19,11 +19,7 @@ public class CuentaServiceImpl implements CuentaService {
 
   @Override
   public Cuenta saveCuenta(Cuenta cuenta) {
-    try {
-      return cuentaRepository.save(cuenta);
-    } catch (Exception e) {
-      throw new ResourceCreationException("Error al crear el cuenta");
-    }
+    return cuentaRepository.save(cuenta);
   }
 
   @Override
@@ -34,14 +30,10 @@ public class CuentaServiceImpl implements CuentaService {
 
   @Override
   public Cuenta updateCuenta(Cuenta cuenta) {
-    try {
-      if (!cuentaRepository.existsById(cuenta.getNumeroCuenta()))
-        throw new ResourceNotFoundException("Cuenta no encontrado con id: " + cuenta.getNumeroCuenta());
+    if (!cuentaRepository.existsById(cuenta.getNumeroCuenta()))
+      throw new ResourceNotFoundException("Cuenta no encontrado con id: " + cuenta.getNumeroCuenta());
 
-      return cuentaRepository.save(cuenta);
-    } catch (Exception e) {
-      throw new ResourceUpdateException("Error al actualizar el cuenta");
-    }
+    return cuentaRepository.save(cuenta);
   }
 
   @Override

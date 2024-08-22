@@ -52,14 +52,10 @@ public class MovimientosServiceImpl implements MovimientosService {
 
   @Override
   public Movimientos updateMovimiento(Movimientos movimientos) {
-    try {
-      if (!movimientosRepository.existsById(movimientos.getMovimientosId()))
-        throw new ResourceNotFoundException("Movimiento no encontrado con id: " + movimientos.getMovimientosId());
+    if (!movimientosRepository.existsById(movimientos.getMovimientosId()))
+      throw new ResourceNotFoundException("Movimiento no encontrado con id: " + movimientos.getMovimientosId());
 
-      return movimientosRepository.save(movimientos);
-    } catch (Exception e) {
-      throw new ResourceUpdateException("Error al actualizar el movimientos");
-    }
+    return movimientosRepository.save(movimientos);
   }
 
   @Override
