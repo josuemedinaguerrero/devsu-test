@@ -22,4 +22,6 @@ public class Cuenta {
   private Double saldoInicial;
   private String estado;
 
+  private Long clienteId;
+
 }
